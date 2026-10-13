@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ThumbGrab - YouTube Thumbnail Downloader</title>
+<meta name="description" content="Free YouTube thumbnail downloader. Paste a video link and download the thumbnail in HD, 720p and more sizes.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+/* Layout: single centered column. Hero with the tool first, results below it, then SEO text, FAQ and a service CTA. */
+:root{
+  --bg:#F4F5FA; --card:#FFFFFF; --ink:#0F1222; --muted:#5B6078; --line:#DDE0EE;
+  --blue:#2D5BFF; --blue-dark:#1B3FCC; --soft:#E8EDFF; --warn:#B3261E;
+  --font-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --font-body:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.55}
+.wrap{max-width:760px;margin:0 auto;padding-inline:16px}
+header.top{padding-block:18px}
+.logo{font-family:var(--font-display);font-weight:800;font-size:22px;letter-spacing:-.01em}
+.logo span{color:var(--blue)}
+.hero{padding-block:18px 28px}
+h1{font-family:var(--font-display);font-weight:800;font-size:clamp(30px,7vw,48px);line-height:1.05;letter-spacing:-.02em;margin:0 0 10px;text-wrap:balance}
+.lead{margin:0 0 20px;color:var(--muted);font-size:17px;max-width:56ch}
+form{display:flex;gap:10px;flex-wrap:wrap}
+input[type=text]{flex:1 1 260px;min-width:0;font:inherit;padding:15px 16px;border:2px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink)}
+input[type=text]:focus{border-color:var(--blue);outline:none}
+button,.btn{font:inherit;font-weight:700;border:0;border-radius:14px;padding:15px 22px;background:var(--blue);color:#fff;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+button:hover,.btn:hover{background:var(--blue-dark)}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.err{margin:10px 0 0;color:var(--warn);font-weight:700;min-height:1.4em}
+#result[hidden]{display:none}
+.preview{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:14px}
+.preview img{display:block;width:100%;height:auto;border-radius:10px;background:var(--soft);aspect-ratio:16/9;object-fit:cover}
+.sizes{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-bottom:6px}
+.size{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.size b{display:block}
+.size small{color:var(--muted)}
+.size button{padding:10px 14px;font-size:14px}
+.note{font-size:13px;color:var(--muted);margin:8px 0 0}
+section{padding-block:24px}
+h2{font-family:var(--font-display);font-weight:800;font-size:26px;letter-spacing:-.01em;margin:0 0 10px}
+section p,section li{color:var(--muted);max-width:66ch}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+summary{font-weight:700;cursor:pointer}
+details p{margin:8px 0 0}
+.cta{background:var(--ink);color:#fff;border-radius:22px;padding:26px 22px;margin-block:10px 30px}
+.cta h2{color:#fff}
+.cta p{color:#C9CDE4}
+.cta .btn{background:#fff;color:var(--ink);margin-top:6px}
+footer{padding-block:10px 40px;font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="logo">Thumb<span>Grab</span></div></div></header>
+
+<main class="wrap">
+  <div class="hero">
+    <h1>YouTube thumbnail downloader</h1>
+    <p class="lead">Paste a video link. Get the thumbnail in HD, 720p and smaller sizes. Free, no sign-up.</p>
+    <form id="f" novalidate>
+      <input type="text" id="url" placeholder="https://www.youtube.com/watch?v=..." aria-label="YouTube video link" autocomplete="off" inputmode="url">
+      <button type="submit">Get thumbnail</button>
+    </form>
+    <p class="err" id="err" role="alert"></p>
+  </div>
+
+  <div id="result" hidden>
+    <div class="preview"><img id="prev" alt="Video thumbnail preview"></div>
+    <div class="sizes" id="sizes"></div>
+    <p class="note">If a download opens a new tab, press and hold the image and choose Save image.</p>
+  </div>
+
+  <section>
+    <h2>How to download a YouTube thumbnail</h2>
+    <ol>
+      <li>Copy the video link from YouTube.</li>
+      <li>Paste it in the box above and tap Get thumbnail.</li>
+      <li>Pick a size and tap Download.</li>
+    </ol>
+    <p>Works with normal videos, Shorts and youtu.be short links.</p>
+  </section>
+
+  <section>
+    <h2>Questions</h2>
+    <details><summary>Which size should I pick?</summary><p>Use 1280x720 (HD) when it is available. It is the sharpest. Smaller sizes are good for quick previews or reference.</p></details>
+    <details><summary>Why is the HD size missing?</summary><p>Some videos, mostly older or low-resolution ones, have no 1280x720 thumbnail. The tool only shows sizes that exist.</p></details>
+    <details><summary>Can I reuse a thumbnail?</summary><p>A thumbnail belongs to the creator of the video. Use downloads for reference, inspiration or your own videos. Do not repost someone else's thumbnail as your own.</p></details>
+    <details><summary>Is it free?</summary><p>Yes. No account is needed.</p></details>
+  </section>
+
+  <div class="cta">
+    <h2>Need a thumbnail that gets clicks?</h2>
+    <p>I design custom YouTube thumbnails for creators. Send your video title and I will share a sample.</p>
+    <a class="btn" id="wa" href="#" target="_blank" rel="noopener">Message me on WhatsApp</a>
+  </div>
+</main>
+
+<footer><div class="wrap">ThumbGrab is not affiliated with YouTube. Thumbnails belong to their respective creators.</div></footer>
+
+<script>
+var MY_WHATSAPP = "91XXXXXXXXXX"; /* apna WhatsApp number yahan likho, country code ke saath, bina + ke */
+document.getElementById("wa").href = "https://wa.me/" + MY_WHATSAPP + "?text=" + encodeURIComponent("Hi, I need a YouTube thumbnail design.");
+
+var SIZES = [
+  {k:"maxresdefault", label:"HD", dim:"1280 x 720"},
+  {k:"sddefault", label:"Standard", dim:"640 x 480"},
+  {k:"hqdefault", label:"High", dim:"480 x 360"},
+  {k:"mqdefault", label:"Medium", dim:"320 x 180"}
+];
+
+function getId(input){
+  var s = (input || "").trim();
+  if (/^[\w-]{11}$/.test(s)) return s;
+  try {
+    var u = new URL(/^https?:\/\//i.test(s) ? s : "https://" + s);
+    var h = u.hostname.replace(/^www\.|^m\./, "");
+    if (h === "youtu.be") return u.pathname.slice(1).split("/")[0].slice(0, 11) || null;
+    if (h === "youtube.com" || h === "music.youtube.com") {
+      if (u.searchParams.get("v")) return u.searchParams.get("v").slice(0, 11);
+      var m = u.pathname.match(/^\/(shorts|embed|live|v)\/([\w-]{11})/);
+      if (m) return m[2];
+    }
+  } catch (e) {}
+  return null;
+}
+function imgUrl(id, k){ return "https://img.youtube.com/vi/" + id + "/" + k + ".jpg"; }
+function check(url){
+  return new Promise(function(res){
+    var i = new Image();
+    i.onload = function(){ res(i.naturalWidth > 120); };
+    i.onerror = function(){ res(false); };
+    i.src = url;
+  });
+}
+function download(url, name){
+  fetch(url).then(function(r){ return r.blob(); }).then(function(b){
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(b); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+  }).catch(function(){ window.open(url, "_blank", "noopener"); });
+}
+
+document.getElementById("f").addEventListener("submit", function(e){
+  e.preventDefault();
+  var err = document.getElementById("err"), box = document.getElementById("result");
+  err.textContent = ""; box.hidden = true;
+  var id = getId(document.getElementById("url").value);
+  if (!id) { err.textContent = "Link samajh nahi aaya. Poora YouTube link paste karo."; return; }
+  Promise.all(SIZES.map(function(s){ return check(imgUrl(id, s.k)); })).then(function(ok){
+    var list = SIZES.filter(function(s, i){ return ok[i]; });
+    if (!list.length) { err.textContent = "Is video ka thumbnail nahi mila. Link check karo."; return; }
+    document.getElementById("prev").src = imgUrl(id, list[0].k);
+    var wrap = document.getElementById("sizes"); wrap.innerHTML = "";
+    list.forEach(function(s){
+      var d = document.createElement("div"); d.className = "size";
+      d.innerHTML = "<div><b>" + s.label + "</b><small>" + s.dim + "</small></div>";
+      var b = document.createElement("button"); b.type = "button"; b.textContent = "Download";
+      b.onclick = function(){ download(imgUrl(id, s.k), "thumbnail-" + id + "-" + s.k + ".jpg"); };
+      d.appendChild(b); wrap.appendChild(d);
+    });
+    box.hidden = false;
+    box.scrollIntoView({behavior:"smooth", block:"start"});
+  });
+});
+</script>
+</body>
+</html>
